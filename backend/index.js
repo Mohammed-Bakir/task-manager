@@ -19,48 +19,29 @@ const server = createServer(app);
 // Socket.IO setup
 const io = new Server(server, {
     cors: {
-        origin: process.env.NODE_ENV === 'production'
-            ? ["https://task-management-livid-three.vercel.app"]
-            : ["http://localhost:5173"],
+        origin: [
+            "https://task-management-livid-three.vercel.app",
+            "http://localhost:5173",
+            "http://localhost:3000"
+        ],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true
     }
 });
 
-// Middleware
+// Middleware - Simplified CORS for debugging
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production'
-        ? ["https://task-management-livid-three.vercel.app"]
-        : ["http://localhost:5173"],
+    origin: [
+        "https://task-management-livid-three.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000"
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     preflightContinue: false,
     optionsSuccessStatus: 200
 }));
-// Additional CORS headers for preflight requests
-app.use((req, res, next) => {
-    const allowedOrigins = process.env.NODE_ENV === 'production'
-        ? ["https://task-management-livid-three.vercel.app"]
-        : ["http://localhost:5173"];
-
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
-    }
-
-    next();
-});
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
