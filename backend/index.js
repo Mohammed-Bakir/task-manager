@@ -29,7 +29,7 @@ const io = new Server(server, {
     }
 });
 
-// Middleware - Simplified CORS for debugging
+// CORS Configuration - Updated for production
 app.use(cors({
     origin: [
         "https://task-management-livid-three.vercel.app",
@@ -38,7 +38,7 @@ app.use(cors({
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
     preflightContinue: false,
     optionsSuccessStatus: 200
 }));

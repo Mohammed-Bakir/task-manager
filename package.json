@@ -1,0 +1,19 @@
+{
+    "name": "task-manager",
+    "version": "1.0.0",
+    "description": "Task Manager Full Stack Application",
+    "main": "backend/index.js",
+    "scripts": {
+        "start": "cd backend && npm start",
+        "dev": "cd backend && npm run dev",
+        "install-backend": "cd backend && npm install",
+        "install-frontend": "cd frontend && npm install"
+    },
+    "keywords": [
+        "task-management",
+        "kanban",
+        "productivity"
+    ],
+    "author": "",
+    "license": "ISC"
+}
