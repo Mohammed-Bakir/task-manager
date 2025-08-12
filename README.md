@@ -106,23 +106,6 @@ PORT=5001
 - `PUT /api/tasks/:id` - Update task
 - `DELETE /api/tasks/:id` - Delete task
 
-## 🎯 Development Roadmap
-
-- [x] Project setup and structure
-- [ ] User authentication system
-- [ ] Project management
-- [ ] Kanban board with drag & drop
-- [ ] Task CRUD operations
-- [ ] Real-time collaboration
-- [ ] Comments and attachments
-- [ ] Due dates and priorities
-- [ ] Search and filtering
-- [ ] Mobile responsiveness
-
 ## 🤝 Contributing
 
 This is a portfolio project showcasing modern web development practices.
-
-## 📄 License
-
-MIT License - feel free to use this project for learning and portfolio purposes.
