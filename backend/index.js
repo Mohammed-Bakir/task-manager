@@ -19,7 +19,9 @@ const server = createServer(app);
 // Socket.IO setup
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.NODE_ENV === 'production'
+            ? ["https://your-task-manager.vercel.app"]
+            : ["http://localhost:5173"],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true
     }
@@ -27,7 +29,9 @@ const io = new Server(server, {
 
 // Middleware
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.NODE_ENV === 'production'
+        ? ["https://your-task-manager.vercel.app"]
+        : ["http://localhost:5173"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"]
 }));
@@ -35,7 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('✅ Connected to MongoDB'))
     .catch(err => console.error('❌ MongoDB connection error:', err));
 
