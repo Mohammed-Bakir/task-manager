@@ -66,6 +66,35 @@ app.get('/api/test', (req, res) => {
     });
 });
 
+// Clean database endpoint (for development only)
+app.post('/api/admin/clean-database', async (req, res) => {
+    try {
+        // Import models
+        const User = (await import('./models/User.js')).default;
+        const Project = (await import('./models/Project.js')).default;
+        const Task = (await import('./models/Task.js')).default;
+
+        // Clear all collections
+        await User.deleteMany({});
+        await Project.deleteMany({});
+        await Task.deleteMany({});
+
+        res.json({
+            success: true,
+            message: 'Database cleaned successfully!',
+            timestamp: new Date().toISOString(),
+            cleared: ['users', 'projects', 'tasks']
+        });
+    } catch (error) {
+        console.error('Error cleaning database:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error cleaning database',
+            error: error.message
+        });
+    }
+});
+
 // Auth routes
 app.use('/api/auth', authRoutes);
 
