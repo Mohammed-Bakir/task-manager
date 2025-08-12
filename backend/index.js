@@ -29,13 +29,9 @@ const io = new Server(server, {
     }
 });
 
-// CORS Configuration - Updated for production
+// Temporary wildcard CORS for debugging
 app.use(cors({
-    origin: [
-        "https://task-management-livid-three.vercel.app",
-        "http://localhost:5173",
-        "http://localhost:3000"
-    ],
+    origin: true, // Allow all origins temporarily
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
@@ -57,6 +53,16 @@ app.get('/api/health', (req, res) => {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
         database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    });
+});
+
+// Test endpoint to check CORS
+app.get('/api/test', (req, res) => {
+    res.json({
+        message: 'CORS test successful!',
+        timestamp: new Date().toISOString(),
+        origin: req.headers.origin,
+        cors: 'wildcard enabled'
     });
 });
 
