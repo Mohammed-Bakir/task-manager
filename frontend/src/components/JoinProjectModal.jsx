@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FiX, FiUsers, FiSearch } from 'react-icons/fi';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const JoinProjectModal = ({ onClose }) => {
     const [projectId, setProjectId] = useState('');
@@ -28,7 +29,7 @@ const JoinProjectModal = ({ onClose }) => {
 
         try {
             // Use the new join endpoint that allows self-joining
-            const response = await axios.post(`http://localhost:5001/api/projects/${projectId.trim()}/join`);
+            const response = await axios.post(`${API_BASE_URL}/api/projects/${projectId.trim()}/join`);
 
             if (response.data.success) {
                 setSuccess('Successfully joined the project!');

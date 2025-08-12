@@ -3,6 +3,7 @@ import { FiX, FiUserPlus, FiMail, FiTrash2, FiUser, FiUsers, FiStar } from 'reac
 import { useProject } from '../context/ProjectContext';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 
 const ProjectMembersModal = ({ project, onClose }) => {
     const [inviteEmail, setInviteEmail] = useState('');
@@ -33,7 +34,7 @@ const ProjectMembersModal = ({ project, onClose }) => {
         setError('');
 
         try {
-            const response = await axios.post(`http://localhost:5001/api/projects/${project._id}/members`, {
+            const response = await axios.post(`${API_BASE_URL}/api/projects/${project._id}/members`, {
                 email: inviteEmail.trim(),
                 role: 'member'
             });
@@ -55,7 +56,7 @@ const ProjectMembersModal = ({ project, onClose }) => {
     const handleRemoveMember = async (memberId) => {
         if (window.confirm('Are you sure you want to remove this member from the project?')) {
             try {
-                const response = await axios.delete(`http://localhost:5001/api/projects/${project._id}/members/${memberId}`);
+                const response = await axios.delete(`${API_BASE_URL}/api/projects/${project._id}/members/${memberId}`);
 
                 if (response.data.success) {
                     console.log('Member removed successfully');

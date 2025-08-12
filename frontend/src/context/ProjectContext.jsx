@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
 import { io } from 'socket.io-client';
+import { API_BASE_URL } from '../config/api';
 
 // Create Project Context
 const ProjectContext = createContext();
@@ -182,7 +183,7 @@ export const ProjectProvider = ({ children }) => {
     // Initialize Socket.IO connection
     useEffect(() => {
         if (isAuthenticated && token) {
-            const socket = io('http://localhost:5001', {
+            const socket = io(API_BASE_URL, {
                 auth: { token },
                 transports: ['websocket', 'polling']
             });
@@ -231,7 +232,7 @@ export const ProjectProvider = ({ children }) => {
         dispatch({ type: PROJECT_ACTIONS.LOAD_PROJECTS_START });
 
         try {
-            const response = await axios.get('http://localhost:5001/api/projects');
+            const response = await axios.get(`${API_BASE_URL}/api/projects`);
             dispatch({
                 type: PROJECT_ACTIONS.LOAD_PROJECTS_SUCCESS,
                 payload: response.data.data.projects
@@ -252,7 +253,7 @@ export const ProjectProvider = ({ children }) => {
         dispatch({ type: PROJECT_ACTIONS.CREATE_PROJECT_START });
 
         try {
-            const response = await axios.post('http://localhost:5001/api/projects', projectData);
+            const response = await axios.post(`${API_BASE_URL}/api/projects`, projectData);
             dispatch({
                 type: PROJECT_ACTIONS.CREATE_PROJECT_SUCCESS,
                 payload: response.data.data.project
@@ -271,7 +272,7 @@ export const ProjectProvider = ({ children }) => {
     // Update project
     const updateProject = async (projectId, projectData) => {
         try {
-            const response = await axios.put(`http://localhost:5001/api/projects/${projectId}`, projectData);
+            const response = await axios.put(`${API_BASE_URL}/api/projects/${projectId}`, projectData);
             dispatch({
                 type: PROJECT_ACTIONS.UPDATE_PROJECT,
                 payload: response.data.data.project
@@ -286,7 +287,7 @@ export const ProjectProvider = ({ children }) => {
     // Delete project
     const deleteProject = async (projectId) => {
         try {
-            await axios.delete(`http://localhost:5001/api/projects/${projectId}`);
+            await axios.delete(`${API_BASE_URL}/api/projects/${projectId}`);
             dispatch({
                 type: PROJECT_ACTIONS.DELETE_PROJECT,
                 payload: projectId
@@ -311,7 +312,7 @@ export const ProjectProvider = ({ children }) => {
         dispatch({ type: PROJECT_ACTIONS.LOAD_TASKS_START });
 
         try {
-            const response = await axios.get(`http://localhost:5001/api/tasks/project/${projectId}`);
+            const response = await axios.get(`${API_BASE_URL}/api/tasks/project/${projectId}`);
             dispatch({
                 type: PROJECT_ACTIONS.LOAD_TASKS_SUCCESS,
                 payload: response.data.data.tasks
@@ -330,7 +331,7 @@ export const ProjectProvider = ({ children }) => {
     // Create task
     const createTask = async (taskData) => {
         try {
-            const response = await axios.post('http://localhost:5001/api/tasks', taskData);
+            const response = await axios.post(`${API_BASE_URL}/api/tasks`, taskData);
             // Immediately update local state for instant UI feedback
             dispatch({
                 type: PROJECT_ACTIONS.CREATE_TASK,
@@ -346,7 +347,7 @@ export const ProjectProvider = ({ children }) => {
     // Update task
     const updateTask = async (taskId, taskData) => {
         try {
-            const response = await axios.put(`http://localhost:5001/api/tasks/${taskId}`, taskData);
+            const response = await axios.put(`${API_BASE_URL}/api/tasks/${taskId}`, taskData);
             // Immediately update local state for instant UI feedback
             dispatch({
                 type: PROJECT_ACTIONS.UPDATE_TASK,
@@ -407,7 +408,7 @@ export const ProjectProvider = ({ children }) => {
 
         // Then make the API call in the background
         try {
-            const response = await axios.put(`http://localhost:5001/api/tasks/${taskId}/move`, {
+            const response = await axios.put(`${API_BASE_URL}/api/tasks/${taskId}/move`, {
                 column,
                 destinationIndex
             });
@@ -434,7 +435,7 @@ export const ProjectProvider = ({ children }) => {
     // Delete task
     const deleteTask = async (taskId) => {
         try {
-            await axios.delete(`http://localhost:5001/api/tasks/${taskId}`);
+            await axios.delete(`${API_BASE_URL}/api/tasks/${taskId}`);
             // Immediately update local state for instant UI feedback
             dispatch({
                 type: PROJECT_ACTIONS.DELETE_TASK,
