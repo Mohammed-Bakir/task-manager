@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useProject } from '../context/ProjectContext';
 import { FiLogOut, FiUser, FiPlus, FiFolder, FiEdit, FiTrash2, FiUsers, FiCalendar } from 'react-icons/fi';
+import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 import CreateProjectModal from '../components/CreateProjectModal';
 import JoinProjectModal from '../components/JoinProjectModal';
 import EditProjectModal from '../components/EditProjectModal';
@@ -13,16 +15,54 @@ const Dashboard = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
     const [editingProject, setEditingProject] = useState(null);
+    const [taskStats, setTaskStats] = useState({ activeTasks: 0, completedTasks: 0 });
     const navigate = useNavigate();
 
     useEffect(() => {
         loadProjects();
+        loadTaskStats();
     }, []);
 
-    // Reload projects when returning to dashboard (e.g., after deleting a project)
+    // Load task statistics from all projects
+    const loadTaskStats = async () => {
+        try {
+            let activeTasks = 0;
+            let completedTasks = 0;
+
+            // Get all projects first
+            const projectsResponse = await axios.get(`${API_BASE_URL}/api/projects`);
+            const allProjects = projectsResponse.data.data || [];
+
+            // For each project, get its tasks and count them
+            for (const project of allProjects) {
+                try {
+                    const tasksResponse = await axios.get(`${API_BASE_URL}/api/tasks/project/${project._id}`);
+                    const tasks = tasksResponse.data.data || [];
+
+                    // Count active and completed tasks
+                    tasks.forEach(task => {
+                        if (task.column === 'done') {
+                            completedTasks++;
+                        } else {
+                            activeTasks++;
+                        }
+                    });
+                } catch (error) {
+                    console.error(`Error loading tasks for project ${project._id}:`, error);
+                }
+            }
+
+            setTaskStats({ activeTasks, completedTasks });
+        } catch (error) {
+            console.error('Error loading task statistics:', error);
+        }
+    };
+
+    // Reload projects and task stats when returning to dashboard
     useEffect(() => {
         const handleFocus = () => {
             loadProjects();
+            loadTaskStats(); // Also reload task stats
         };
 
         window.addEventListener('focus', handleFocus);
@@ -31,6 +71,7 @@ const Dashboard = () => {
         const handleVisibilityChange = () => {
             if (!document.hidden) {
                 loadProjects();
+                loadTaskStats(); // Also reload task stats
             }
         };
 
@@ -67,12 +108,10 @@ const Dashboard = () => {
 
     const getProjectStats = () => {
         const totalProjects = projects.length;
-        // For now, we'll show 0 for tasks since we haven't loaded them
-        // In a real app, you might want to load task counts for each project
         return {
             totalProjects,
-            activeTasks: 0,
-            completedTasks: 0
+            activeTasks: taskStats.activeTasks,
+            completedTasks: taskStats.completedTasks
         };
     };
 
