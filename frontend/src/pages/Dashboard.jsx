@@ -20,8 +20,14 @@ const Dashboard = () => {
 
     useEffect(() => {
         loadProjects();
-        loadTaskStats();
     }, []);
+
+    // Load task stats after projects are loaded
+    useEffect(() => {
+        if (projects.length > 0) {
+            loadTaskStats();
+        }
+    }, [projects]);
 
     // Load task statistics from all projects
     const loadTaskStats = async () => {
@@ -29,15 +35,15 @@ const Dashboard = () => {
             let activeTasks = 0;
             let completedTasks = 0;
 
-            // Get all projects first
-            const projectsResponse = await axios.get(`${API_BASE_URL}/api/projects`);
-            const allProjects = projectsResponse.data.data || [];
+            console.log('Loading task stats for projects:', projects.length);
 
-            // For each project, get its tasks and count them
-            for (const project of allProjects) {
+            // Use the projects that are already loaded
+            for (const project of projects) {
                 try {
                     const tasksResponse = await axios.get(`${API_BASE_URL}/api/tasks/project/${project._id}`);
                     const tasks = tasksResponse.data.data || [];
+
+                    console.log(`Project ${project.title} has ${tasks.length} tasks`);
 
                     // Count active and completed tasks
                     tasks.forEach(task => {
@@ -52,6 +58,7 @@ const Dashboard = () => {
                 }
             }
 
+            console.log('Task stats calculated:', { activeTasks, completedTasks });
             setTaskStats({ activeTasks, completedTasks });
         } catch (error) {
             console.error('Error loading task statistics:', error);
