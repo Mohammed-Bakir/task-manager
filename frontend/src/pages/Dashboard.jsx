@@ -64,10 +64,11 @@ const Dashboard = () => {
                     } else if (typeof tasksData === 'object' && tasksData !== null) {
                         // If it's an object, flatten all tasks from all columns
                         tasks = [];
-                        Object.keys(tasksData).forEach(column => {
-                            if (Array.isArray(tasksData[column])) {
-                                tasksData[column].forEach(task => {
-                                    tasks.push({ ...task, column: column });
+                        Object.keys(tasksData).forEach(key => {
+                            if (Array.isArray(tasksData[key])) {
+                                tasksData[key].forEach(task => {
+                                    // Don't override the task's original column property
+                                    tasks.push(task);
                                 });
                             }
                         });
