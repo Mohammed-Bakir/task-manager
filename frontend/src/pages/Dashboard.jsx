@@ -71,21 +71,28 @@ const Dashboard = () => {
                                 });
                             }
                         });
-                        console.log(`🔄 Converted object to array: ${tasks.length} tasks`);
                     }
 
-                    console.log(`📝 Project ${project.title} has ${tasks.length} tasks:`, tasks);
 
                     // Count active and completed tasks
                     if (tasks.length > 0) {
+                        const columnCounts = {};
                         tasks.forEach(task => {
-                            console.log(`📌 Task: ${task.title} - Column: ${task.column}`);
-                            if (task.column === 'done') {
+                            console.log(`📌 Task: "${task.title}" - Column: "${task.column}" (type: ${typeof task.column})`);
+
+                            // Count columns for debugging
+                            columnCounts[task.column] = (columnCounts[task.column] || 0) + 1;
+
+                            // Check for different possible "done" column names
+                            if (task.column === 'done' || task.column === 'completed' || task.column === 'finished') {
                                 completedTasks++;
+                                console.log(`✅ Counted as completed: ${task.title}`);
                             } else {
                                 activeTasks++;
+                                console.log(`🔄 Counted as active: ${task.title} (column: ${task.column})`);
                             }
                         });
+                        console.log(`📊 Column distribution for ${project.title}:`, columnCounts);
                     } else {
                         console.log(`⚠️ No tasks found for project ${project.title}`);
                     }
