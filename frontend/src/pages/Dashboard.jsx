@@ -40,7 +40,11 @@ const Dashboard = () => {
             // Use the projects that are already loaded
             for (const project of projects) {
                 try {
-                    const tasksResponse = await axios.get(`${API_BASE_URL}/api/tasks/project/${project._id}`);
+                    const tasksResponse = await axios.get(`${API_BASE_URL}/api/tasks/project/${project._id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
                     const tasks = tasksResponse.data.data || [];
 
                     console.log(`Project ${project.title} has ${tasks.length} tasks`);
