@@ -51,13 +51,33 @@ const Dashboard = () => {
 
                     console.log(`📈 API Response for ${project.title}:`, tasksResponse.data);
 
-                    const tasksData = tasksResponse.data.data || tasksResponse.data || [];
-                    const tasks = Array.isArray(tasksData) ? tasksData : [];
+                    const tasksData = tasksResponse.data.data || tasksResponse.data || {};
+                    console.log(`🔍 Tasks data for ${project.title}:`, tasksData);
+                    console.log(`� PTasks data type:`, typeof tasksData, 'Is array:', Array.isArray(tasksData));
+
+                    let tasks = [];
+
+                    // Handle different response formats
+                    if (Array.isArray(tasksData)) {
+                        // If it's already an array
+                        tasks = tasksData;
+                    } else if (typeof tasksData === 'object' && tasksData !== null) {
+                        // If it's an object, flatten all tasks from all columns
+                        tasks = [];
+                        Object.keys(tasksData).forEach(column => {
+                            if (Array.isArray(tasksData[column])) {
+                                tasksData[column].forEach(task => {
+                                    tasks.push({ ...task, column: column });
+                                });
+                            }
+                        });
+                        console.log(`🔄 Converted object to array: ${tasks.length} tasks`);
+                    }
+
                     console.log(`📝 Project ${project.title} has ${tasks.length} tasks:`, tasks);
-                    console.log(`🔍 Tasks data type:`, typeof tasksData, 'Is array:', Array.isArray(tasksData));
 
                     // Count active and completed tasks
-                    if (Array.isArray(tasks) && tasks.length > 0) {
+                    if (tasks.length > 0) {
                         tasks.forEach(task => {
                             console.log(`📌 Task: ${task.title} - Column: ${task.column}`);
                             if (task.column === 'done') {
@@ -67,7 +87,7 @@ const Dashboard = () => {
                             }
                         });
                     } else {
-                        console.log(`⚠️ No tasks found or tasks is not an array for project ${project.title}`);
+                        console.log(`⚠️ No tasks found for project ${project.title}`);
                     }
                 } catch (error) {
                     console.error(`❌ Error loading tasks for project ${project.title}:`, error);
