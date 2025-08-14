@@ -35,22 +35,28 @@ const Dashboard = () => {
             let activeTasks = 0;
             let completedTasks = 0;
 
-            console.log('Loading task stats for projects:', projects.length);
+            console.log('🔄 Loading task stats for projects:', projects.length);
+            console.log('📋 Projects:', projects.map(p => ({ id: p._id, title: p.title })));
 
             // Use the projects that are already loaded
             for (const project of projects) {
                 try {
+                    console.log(`📊 Loading tasks for project: ${project.title} (${project._id})`);
+
                     const tasksResponse = await axios.get(`${API_BASE_URL}/api/tasks/project/${project._id}`, {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         }
                     });
-                    const tasks = tasksResponse.data.data || [];
 
-                    console.log(`Project ${project.title} has ${tasks.length} tasks`);
+                    console.log(`📈 API Response for ${project.title}:`, tasksResponse.data);
+
+                    const tasks = tasksResponse.data.data || tasksResponse.data || [];
+                    console.log(`📝 Project ${project.title} has ${tasks.length} tasks:`, tasks);
 
                     // Count active and completed tasks
                     tasks.forEach(task => {
+                        console.log(`📌 Task: ${task.title} - Column: ${task.column}`);
                         if (task.column === 'done') {
                             completedTasks++;
                         } else {
@@ -58,14 +64,15 @@ const Dashboard = () => {
                         }
                     });
                 } catch (error) {
-                    console.error(`Error loading tasks for project ${project._id}:`, error);
+                    console.error(`❌ Error loading tasks for project ${project.title}:`, error);
+                    console.error('Error details:', error.response?.data);
                 }
             }
 
-            console.log('Task stats calculated:', { activeTasks, completedTasks });
+            console.log('📊 Final task stats calculated:', { activeTasks, completedTasks });
             setTaskStats({ activeTasks, completedTasks });
         } catch (error) {
-            console.error('Error loading task statistics:', error);
+            console.error('❌ Error loading task statistics:', error);
         }
     };
 
@@ -257,6 +264,21 @@ const Dashboard = () => {
                         <div className="stat-card">
                             <h3>{stats.activeTasks}</h3>
                             <p>Active Tasks</p>
+                            <button
+                                onClick={loadTaskStats}
+                                style={{
+                                    fontSize: '10px',
+                                    padding: '2px 6px',
+                                    marginTop: '4px',
+                                    background: '#007bff',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '3px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Refresh
+                            </button>
                         </div>
                         <div className="stat-card">
                             <h3>{stats.completedTasks}</h3>
