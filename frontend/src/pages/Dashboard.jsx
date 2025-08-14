@@ -51,18 +51,24 @@ const Dashboard = () => {
 
                     console.log(`📈 API Response for ${project.title}:`, tasksResponse.data);
 
-                    const tasks = tasksResponse.data.data || tasksResponse.data || [];
+                    const tasksData = tasksResponse.data.data || tasksResponse.data || [];
+                    const tasks = Array.isArray(tasksData) ? tasksData : [];
                     console.log(`📝 Project ${project.title} has ${tasks.length} tasks:`, tasks);
+                    console.log(`🔍 Tasks data type:`, typeof tasksData, 'Is array:', Array.isArray(tasksData));
 
                     // Count active and completed tasks
-                    tasks.forEach(task => {
-                        console.log(`📌 Task: ${task.title} - Column: ${task.column}`);
-                        if (task.column === 'done') {
-                            completedTasks++;
-                        } else {
-                            activeTasks++;
-                        }
-                    });
+                    if (Array.isArray(tasks) && tasks.length > 0) {
+                        tasks.forEach(task => {
+                            console.log(`📌 Task: ${task.title} - Column: ${task.column}`);
+                            if (task.column === 'done') {
+                                completedTasks++;
+                            } else {
+                                activeTasks++;
+                            }
+                        });
+                    } else {
+                        console.log(`⚠️ No tasks found or tasks is not an array for project ${project.title}`);
+                    }
                 } catch (error) {
                     console.error(`❌ Error loading tasks for project ${project.title}:`, error);
                     console.error('Error details:', error.response?.data);
