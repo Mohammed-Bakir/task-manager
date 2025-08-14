@@ -35,13 +35,12 @@ const Dashboard = () => {
             let activeTasks = 0;
             let completedTasks = 0;
 
-            console.log('🔄 Loading task stats for projects:', projects.length);
-            console.log('📋 Projects:', projects.map(p => ({ id: p._id, title: p.title })));
+
 
             // Use the projects that are already loaded
             for (const project of projects) {
                 try {
-                    console.log(`📊 Loading tasks for project: ${project.title} (${project._id})`);
+
 
                     const tasksResponse = await axios.get(`${API_BASE_URL}/api/tasks/project/${project._id}`, {
                         headers: {
@@ -49,11 +48,9 @@ const Dashboard = () => {
                         }
                     });
 
-                    console.log(`📈 API Response for ${project.title}:`, tasksResponse.data);
+
 
                     const tasksData = tasksResponse.data.data || tasksResponse.data || {};
-                    console.log(`🔍 Tasks data for ${project.title}:`, tasksData);
-                    console.log(`� PTasks data type:`, typeof tasksData, 'Is array:', Array.isArray(tasksData));
 
                     let tasks = [];
 
@@ -77,33 +74,21 @@ const Dashboard = () => {
 
                     // Count active and completed tasks
                     if (tasks.length > 0) {
-                        const columnCounts = {};
                         tasks.forEach(task => {
-                            console.log(`📌 Task: "${task.title}" - Column: "${task.column}" (type: ${typeof task.column})`);
-
-                            // Count columns for debugging
-                            columnCounts[task.column] = (columnCounts[task.column] || 0) + 1;
-
-                            // Check for different possible "done" column names
-                            if (task.column === 'done' || task.column === 'completed' || task.column === 'finished') {
+                            if (task.column === 'done') {
                                 completedTasks++;
-                                console.log(`✅ Counted as completed: ${task.title}`);
                             } else {
                                 activeTasks++;
-                                console.log(`🔄 Counted as active: ${task.title} (column: ${task.column})`);
                             }
                         });
-                        console.log(`📊 Column distribution for ${project.title}:`, columnCounts);
                     } else {
-                        console.log(`⚠️ No tasks found for project ${project.title}`);
+                        return
                     }
                 } catch (error) {
                     console.error(`❌ Error loading tasks for project ${project.title}:`, error);
                     console.error('Error details:', error.response?.data);
                 }
             }
-
-            console.log('📊 Final task stats calculated:', { activeTasks, completedTasks });
             setTaskStats({ activeTasks, completedTasks });
         } catch (error) {
             console.error('❌ Error loading task statistics:', error);
@@ -298,21 +283,6 @@ const Dashboard = () => {
                         <div className="stat-card">
                             <h3>{stats.activeTasks}</h3>
                             <p>Active Tasks</p>
-                            <button
-                                onClick={loadTaskStats}
-                                style={{
-                                    fontSize: '10px',
-                                    padding: '2px 6px',
-                                    marginTop: '4px',
-                                    background: '#007bff',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '3px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Refresh
-                            </button>
                         </div>
                         <div className="stat-card">
                             <h3>{stats.completedTasks}</h3>
